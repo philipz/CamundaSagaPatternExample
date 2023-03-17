@@ -16,11 +16,13 @@ client.subscribe("BookFlight", async function({ task, taskService }) {
   // complete the task
 
  // Create variables to be returned to the process
- const processVariables = new Variables();
+  const processVariables = new Variables();
+  const id = create_UUID();
   processVariables.set("FlightBookingStatus", "Confirmed");
   processVariables.set("FlightBookingID", create_UUID());
 // Complete the task
   await taskService.complete(task, processVariables);
+  console.log(`Flight booking was finished: ${id} ...`);
 });
 
 // susbscribe to the topic: 'CancelFlightBooking'
@@ -32,6 +34,8 @@ client.subscribe("CancelFlightBooking", async function({ task, taskService }) {
   processVariables.set("FlightBookingStatus", "Canceled");
   // complete task
   await taskService.complete(task, processVariables);
+  const id = task.variables.get('FlightBookingID');
+  console.log(`Flight booking was canceled: ${id} ...`);
 });
 
 

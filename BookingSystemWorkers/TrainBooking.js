@@ -4,7 +4,7 @@ const { Variables } = require("camunda-external-task-client-js");
 // configuration for the Client:
 //  - 'baseUrl': url to the Workflow Engine
 //  - 'logger': utility to automatically log important events
-const config = { baseUrl: "http://localhost:8080/engine-rest", use: logger, asyncResponseTimeout:50000, maxTasks:1 };
+const config = { baseUrl: "http://localhost:8080/engine-rest", use: logger, asyncResponseTimeout:50000 };
 
 // create a Client instance with custom configuration
 const client = new Client(config);
@@ -12,20 +12,24 @@ const client = new Client(config);
 // susbscribe to the topic: 'BookTrain'
 client.subscribe("BookTrain", async function({ task, taskService }) { 
   // Put your business logic and create variables
- const processVariables = new Variables();
+  const processVariables = new Variables();
+  const id = create_UUID();
   processVariables.set("TrainBookingStatus", "Confirmed");
-  processVariables.set("TrainBookingID", create_UUID());
+  processVariables.set("TrainBookingID", id);
  // complete the task
   await taskService.complete(task, processVariables);
+  console.log(`Train booking was finished: ${id} ...`);
 });
 
 // susbscribe to the topic: 'CancelTrainBooking'
-client.subscribe("CancelTrainBooking", async function({ task, taskService }) { 
+client.subscribe("CancelTrainBooking", async function({ task, taskService }) {
   //create variables
   const processVariables = new Variables();
   processVariables.set("TrailBookingStatus", "Canceled");
   //complete the task
   await taskService.complete(task, processVariables);
+  const id = task.variables.get('TrainBookingID');
+  console.log(`Train booking was canceled: ${id} ...`);
 });
 
 function create_UUID(){

@@ -12,11 +12,13 @@ const client = new Client(config);
 // susbscribe to the topic: 'BookHotel'
 client.subscribe("BookHotel", async function({ task, taskService }) { 
     // Put your business logic and create variables
- const processVariables = new Variables();
+  const processVariables = new Variables();
+  const id = create_UUID();
   processVariables.set("HotelBookingStatus", "Confirmed");
-  processVariables.set("HotelBookingID", create_UUID());
+  processVariables.set("HotelBookingID", id);
 // complete the task
   await taskService.complete(task, processVariables);
+  console.log(`Hotel booking was finished: ${id} ...`);
 });
 // susbscribe to the topic: 'CancelHotelBooking'
 client.subscribe("CancelHotelBooking", async function({ task, taskService }) { 
@@ -24,6 +26,8 @@ client.subscribe("CancelHotelBooking", async function({ task, taskService }) {
   processVariables.set("HotelBookingStatus", "Canceled");
   //Complete the task.
   await taskService.complete(task, processVariables);
+  const id = task.variables.get('HotelBookingID');
+  console.log(`Hotel booking was canceled: ${id} ...`);
 });
 
 
