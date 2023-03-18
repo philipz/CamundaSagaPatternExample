@@ -4,7 +4,7 @@ const { Variables } = require("camunda-external-task-client-js");
 // configuration for the Client:
 //  - 'baseUrl': url to the Workflow Engine
 //  - 'logger': utility to automatically log important events
-const config = { baseUrl: "http://localhost:8080/engine-rest", use: logger, asyncResponseTimeout:50000 };
+const config = { baseUrl: "http://localhost:8080/engine-rest", use: logger, asyncResponseTimeout:50000, maxTasks:1 };
 
 // create a Client instance with custom configuration
 const client = new Client(config);
@@ -25,7 +25,7 @@ client.subscribe("BookTrain", async function({ task, taskService }) {
 client.subscribe("CancelTrainBooking", async function({ task, taskService }) {
   //create variables
   const processVariables = new Variables();
-  processVariables.set("TrailBookingStatus", "Canceled");
+  processVariables.set("TrainBookingStatus", "Canceled");
   //complete the task
   await taskService.complete(task, processVariables);
   const id = task.variables.get('TrainBookingID');
