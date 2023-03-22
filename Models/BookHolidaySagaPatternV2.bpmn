@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1fnue5w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1fnue5w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.9.0">
   <bpmn:process id="BookHolidaySagaPatternV2" name="Book Holiday with Saga Pattern" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" camunda:initiator="holidayGoer">
       <bpmn:extensionElements>
@@ -20,7 +20,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
     <bpmn:endEvent id="Event_07xntzc">
       <bpmn:incoming>Flow_00gdo4p</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Activity_0nzn307" name="Book Hotel Room" camunda:modelerTemplate="7ca29576-46be-4568-81a6-a8670c1270fd" camunda:modelerTemplateVersion="1614787455280" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookHotel">
+    <bpmn:serviceTask id="Activity_0nzn307" name="Book Hotel Room" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookHotel">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:outputParameter name="HotelBookingStatus">${HotelBookingStatus}</camunda:outputParameter>
@@ -29,7 +29,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
       <bpmn:incoming>Flow_0wcb6gl</bpmn:incoming>
       <bpmn:outgoing>Flow_1e75ewe</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0fy5rid" name="Book Flight" camunda:modelerTemplate="1ef1787c-ca78-4094-be55-4bce8957c80d" camunda:modelerTemplateVersion="1614700260539" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookFlight">
+    <bpmn:serviceTask id="Activity_0fy5rid" name="Book Flight" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookFlight">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:outputParameter name="FlightBookingID">${FlightBookingID}</camunda:outputParameter>
@@ -39,7 +39,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
       <bpmn:incoming>Flow_14i2gjh</bpmn:incoming>
       <bpmn:outgoing>Flow_1tla958</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_1ju8g5e" name="Book Train Ticket" camunda:modelerTemplate="d31c419f-fad2-4050-981a-63530d89ce22" camunda:modelerTemplateVersion="1614699886056" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookTrain">
+    <bpmn:serviceTask id="Activity_1ju8g5e" name="Book Train Ticket" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookTrain">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:outputParameter name="TrainBookingID">${TrainBookingID}</camunda:outputParameter>
@@ -124,7 +124,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
     <bpmn:boundaryEvent id="Event_119ysv4" attachedToRef="Activity_1ju8g5e">
       <bpmn:compensateEventDefinition id="CompensateEventDefinition_1yk7mff" />
     </bpmn:boundaryEvent>
-    <bpmn:serviceTask id="Activity_1kzxaan" name="Cancel Train Ticket Booking" camunda:modelerTemplate="72a26a97-4b03-455b-9db8-46098e554fc6" camunda:modelerTemplateVersion="1614700020286" isForCompensation="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="CancelTrainBooking">
+    <bpmn:serviceTask id="Activity_1kzxaan" name="Cancel Train Ticket Booking" isForCompensation="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="CancelTrainBooking">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="TrainBookingID">${TrainBookingID}</camunda:inputParameter>
@@ -135,7 +135,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
     <bpmn:boundaryEvent id="Event_0g83clx" attachedToRef="Activity_0fy5rid">
       <bpmn:compensateEventDefinition id="CompensateEventDefinition_15tkhdg" />
     </bpmn:boundaryEvent>
-    <bpmn:serviceTask id="Activity_0l57gp2" name="Cancel Flight Booking" camunda:modelerTemplate="90c34daa-0a56-4854-bb6d-322e8dff1df6" camunda:modelerTemplateVersion="1614700369234" isForCompensation="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="CancelFlightBooking">
+    <bpmn:serviceTask id="Activity_0l57gp2" name="Cancel Flight Booking" isForCompensation="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="CancelFlightBooking">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="FlightBookingID">${FlightBookingID}</camunda:inputParameter>
@@ -146,7 +146,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
     <bpmn:boundaryEvent id="Event_18hendr" attachedToRef="Activity_0nzn307">
       <bpmn:compensateEventDefinition id="CompensateEventDefinition_1ccthqq" />
     </bpmn:boundaryEvent>
-    <bpmn:serviceTask id="Activity_09q6afw" name="Cancel Hotel Booking" camunda:modelerTemplate="b2fc9d7e-46e4-4680-9dd2-4b6127728d71" camunda:modelerTemplateVersion="1614699308450" isForCompensation="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="CancelHotelBooking">
+    <bpmn:serviceTask id="Activity_09q6afw" name="Cancel Hotel Booking" isForCompensation="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="CancelHotelBooking">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="HotelBookingID">${HotelBookingID}</camunda:inputParameter>
@@ -160,6 +160,60 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="BookHolidaySagaPatternV2">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="189" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_07xntzc_di" bpmnElement="Event_07xntzc">
+        <dc:Bounds x="1202" y="189" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0y3xd5c_di" bpmnElement="Activity_0nzn307">
+        <dc:Bounds x="770" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0sd6san_di" bpmnElement="Activity_0fy5rid">
+        <dc:Bounds x="440" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0m3bseu_di" bpmnElement="Activity_1ju8g5e">
+        <dc:Bounds x="440" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jqytld_di" bpmnElement="Activity_034u6ma">
+        <dc:Bounds x="910" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1whdwse_di" bpmnElement="Gateway_09txvq2">
+        <dc:Bounds x="265" y="182" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_13aaqkp_di" bpmnElement="Gateway_0j0b0yc">
+        <dc:Bounds x="685" y="182" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1vtaf28_di" bpmnElement="Gateway_1vtaf28" isMarkerVisible="true">
+        <dc:Bounds x="1065" y="182" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1049" y="146" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_020yybx_di" bpmnElement="Event_1y70am0">
+        <dc:Bounds x="1142" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1118" y="315" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_132lc24_di" bpmnElement="Activity_1kzxaan">
+        <dc:Bounds x="540" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_028w8e5_di" bpmnElement="Activity_0l57gp2">
+        <dc:Bounds x="530" y="290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18tc43a_di" bpmnElement="Activity_09q6afw">
+        <dc:Bounds x="900" y="40" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0si4zc3_di" bpmnElement="Event_18hendr">
+        <dc:Bounds x="812" y="149" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09artoc_di" bpmnElement="Event_0g83clx">
+        <dc:Bounds x="442" y="229" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_17fpx65_di" bpmnElement="Event_119ysv4">
+        <dc:Bounds x="452" y="462" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_18ldu07_di" bpmnElement="Flow_18ldu07">
         <di:waypoint x="1010" y="207" />
         <di:waypoint x="1065" y="207" />
@@ -231,51 +285,6 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
           <dc:Bounds x="347" y="82" width="46" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Gateway_1whdwse_di" bpmnElement="Gateway_09txvq2">
-        <dc:Bounds x="265" y="182" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="152" y="189" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0sd6san_di" bpmnElement="Activity_0fy5rid">
-        <dc:Bounds x="440" y="167" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0m3bseu_di" bpmnElement="Activity_1ju8g5e">
-        <dc:Bounds x="440" y="400" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_132lc24_di" bpmnElement="Activity_1kzxaan">
-        <dc:Bounds x="540" y="520" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_13aaqkp_di" bpmnElement="Gateway_0j0b0yc">
-        <dc:Bounds x="685" y="182" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0y3xd5c_di" bpmnElement="Activity_0nzn307">
-        <dc:Bounds x="770" y="167" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0jqytld_di" bpmnElement="Activity_034u6ma">
-        <dc:Bounds x="910" y="167" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_07xntzc_di" bpmnElement="Event_07xntzc">
-        <dc:Bounds x="1202" y="189" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1vtaf28_di" bpmnElement="Gateway_1vtaf28" isMarkerVisible="true">
-        <dc:Bounds x="1065" y="182" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1049" y="146" width="81" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_028w8e5_di" bpmnElement="Activity_0l57gp2">
-        <dc:Bounds x="530" y="290" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_18tc43a_di" bpmnElement="Activity_09q6afw">
-        <dc:Bounds x="900" y="40" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_020yybx_di" bpmnElement="Event_1y70am0">
-        <dc:Bounds x="1142" y="272" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1118" y="315" width="84" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1oyor85_di" bpmnElement="Association_1oyor85">
         <di:waypoint x="470" y="498" />
         <di:waypoint x="470" y="560" />
@@ -291,15 +300,6 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
         <di:waypoint x="830" y="80" />
         <di:waypoint x="900" y="80" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Event_17fpx65_di" bpmnElement="Event_119ysv4">
-        <dc:Bounds x="452" y="462" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_09artoc_di" bpmnElement="Event_0g83clx">
-        <dc:Bounds x="442" y="229" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0si4zc3_di" bpmnElement="Event_18hendr">
-        <dc:Bounds x="812" y="149" width="36" height="36" />
-      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
