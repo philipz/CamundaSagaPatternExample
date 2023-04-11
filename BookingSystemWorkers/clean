@@ -1,0 +1,4 @@
+#!/bin/sh
+make clean NAME="bookhotel" APP_NAME="BookHotel.js"
+make clean NAME="flightbook" APP_NAME="FlightBooking.js"
+make clean NAME="trainbook" APP_NAME="TrainBooking.js"
