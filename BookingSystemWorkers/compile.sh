@@ -1,6 +1,7 @@
 #!/bin/sh
 cd /app
 #apk add upx
+npm install
 npm install -g pkg
 pkg --loglevel info -t node16-linuxstatic -o ./$2 ./$1
 #upx --best -k $2
