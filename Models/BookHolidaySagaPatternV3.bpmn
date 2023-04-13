@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1fnue5w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.9.0">
-  <bpmn:process id="BookHolidaySagaPatternV2" name="Book Holiday with Saga Pattern" isExecutable="true">
+  <bpmn:process id="BookHolidaySagaPatternV3" name="Book Holiday with Saga Pattern" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" camunda:initiator="holidayGoer">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -100,7 +100,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
     <bpmn:boundaryEvent id="Event_0g83clx" attachedToRef="Activity_0fy5rid">
       <bpmn:compensateEventDefinition id="CompensateEventDefinition_15tkhdg" />
     </bpmn:boundaryEvent>
-    <bpmn:serviceTask id="Activity_0l57gp2" name="Cancel Flight Booking" isForCompensation="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="CancelFlightBooking">
+    <bpmn:serviceTask id="Activity_0l57gp2" name="Cancel Flight Booking" isForCompensation="true" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="CancelFlightBooking">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="FlightBookingID">${FlightBookingID}</camunda:inputParameter>
@@ -182,7 +182,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
     <bpmn:association id="Association_19g1oo4" associationDirection="One" sourceRef="Event_0g83clx" targetRef="Activity_0l57gp2" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="BookHolidaySagaPatternV2">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="BookHolidaySagaPatternV3">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="152" y="359" width="36" height="36" />
       </bpmndi:BPMNShape>
