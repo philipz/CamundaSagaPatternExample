@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1fnue5w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.19.0">
+  <bpmn:process id="BookHolidayV1" name="Book Holiday " isExecutable="true" camunda:historyTimeToLive="P180D">
+    <bpmn:startEvent id="StartEvent_1" camunda:initiator="holidayGoer">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="location" label="Where do you want to go?" type="string" defaultValue="Dublin" />
+        </camunda:formData>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">execution.setVariable("FlightBookingStatus", "No Booking Made");
+execution.setVariable("TrailBookingStatus", "No Booking Made");
+execution.setVariable("HotelBookingStatus", "No Booking Made");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1yl7jr3</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_07xntzc">
+      <bpmn:incoming>Flow_18ldu07</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_0nzn307" name="Book Hotel Room" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookHotel">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="HotelBookingStatus">${HotelBookingStatus}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_14yk6zi</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ma2qlr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0fy5rid" name="Book Flight" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookFlight">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="FlightBookingID">${FlightBookingID}</camunda:outputParameter>
+          <camunda:outputParameter name="FlightBookingStatus">${FlightBookingStatus}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1yl7jr3</bpmn:incoming>
+      <bpmn:outgoing>Flow_050126w</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1ju8g5e" name="Book Train Ticket" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookTrain">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="TrainBookingStatus">${TrainBookingStatus}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_050126w</bpmn:incoming>
+      <bpmn:outgoing>Flow_14yk6zi</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_034u6ma" name="Check Booking Details" camunda:assignee="#{holidayGoer}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="location" label="Your holiday destination" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="FlightBookingStatus" label="Status of your Flight Booking" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="HotelBookingStatus" label="Status of your hotel Booking" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="TrainBookingStatus" label="Status Of Your Train Booking" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ma2qlr</bpmn:incoming>
+      <bpmn:outgoing>Flow_18ldu07</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_18ldu07" sourceRef="Activity_034u6ma" targetRef="Event_07xntzc" />
+    <bpmn:sequenceFlow id="Flow_1yl7jr3" sourceRef="StartEvent_1" targetRef="Activity_0fy5rid" />
+    <bpmn:sequenceFlow id="Flow_050126w" sourceRef="Activity_0fy5rid" targetRef="Activity_1ju8g5e" />
+    <bpmn:sequenceFlow id="Flow_14yk6zi" sourceRef="Activity_1ju8g5e" targetRef="Activity_0nzn307" />
+    <bpmn:sequenceFlow id="Flow_0ma2qlr" sourceRef="Activity_0nzn307" targetRef="Activity_034u6ma" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="BookHolidayV1">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_07xntzc_di" bpmnElement="Event_07xntzc">
+        <dc:Bounds x="902" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0y3xd5c_di" bpmnElement="Activity_0nzn307">
+        <dc:Bounds x="590" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0sd6san_di" bpmnElement="Activity_0fy5rid">
+        <dc:Bounds x="250" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0m3bseu_di" bpmnElement="Activity_1ju8g5e">
+        <dc:Bounds x="420" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jqytld_di" bpmnElement="Activity_034u6ma">
+        <dc:Bounds x="760" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_18ldu07_di" bpmnElement="Flow_18ldu07">
+        <di:waypoint x="860" y="117" />
+        <di:waypoint x="902" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yl7jr3_di" bpmnElement="Flow_1yl7jr3">
+        <di:waypoint x="188" y="117" />
+        <di:waypoint x="250" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_050126w_di" bpmnElement="Flow_050126w">
+        <di:waypoint x="350" y="117" />
+        <di:waypoint x="420" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14yk6zi_di" bpmnElement="Flow_14yk6zi">
+        <di:waypoint x="520" y="117" />
+        <di:waypoint x="590" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ma2qlr_di" bpmnElement="Flow_0ma2qlr">
+        <di:waypoint x="690" y="117" />
+        <di:waypoint x="760" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

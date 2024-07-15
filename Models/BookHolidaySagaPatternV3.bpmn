@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1fnue5w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.9.0">
-  <bpmn:process id="BookHolidaySagaPatternV3" name="Book Holiday with Saga Pattern" isExecutable="true">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1fnue5w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.25.0">
+  <bpmn:process id="BookHolidaySagaPatternV3" name="Book Holiday with Saga Pattern" isExecutable="true" camunda:historyTimeToLive="P180D">
     <bpmn:startEvent id="StartEvent_1" camunda:initiator="holidayGoer">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -20,7 +20,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
     <bpmn:endEvent id="Event_07xntzc">
       <bpmn:incoming>Flow_00gdo4p</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Activity_0nzn307" name="Book Hotel Room" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookHotel">
+    <bpmn:serviceTask id="Activity_0nzn307" name="Book Hotel Room" camunda:asyncBefore="true" camunda:type="external" camunda:topic="BookHotel">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:outputParameter name="HotelBookingStatus">${HotelBookingStatus}</camunda:outputParameter>
@@ -29,7 +29,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
       <bpmn:incoming>Flow_1ujfyxe</bpmn:incoming>
       <bpmn:outgoing>Flow_1e75ewe</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0fy5rid" name="Book Flight" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookFlight">
+    <bpmn:serviceTask id="Activity_0fy5rid" name="Book Flight" camunda:asyncBefore="true" camunda:type="external" camunda:topic="BookFlight">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:outputParameter name="FlightBookingID">${FlightBookingID}</camunda:outputParameter>
@@ -83,13 +83,13 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
     <bpmn:sequenceFlow id="Flow_1sa2b0f" name="No" sourceRef="Gateway_1vtaf28" targetRef="Event_1y70am0">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{not confirm}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:intermediateThrowEvent id="Event_1y70am0" name="Cancel Bookings">
+    <bpmn:intermediateThrowEvent id="Event_1y70am0" name="Cancel Bookings" camunda:asyncBefore="true">
       <bpmn:incoming>Flow_1sa2b0f</bpmn:incoming>
       <bpmn:outgoing>Flow_0u9r45z</bpmn:outgoing>
       <bpmn:compensateEventDefinition id="CompensateEventDefinition_0v5vhay" />
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_0u9r45z" sourceRef="Event_1y70am0" targetRef="Activity_034u6ma" />
-    <bpmn:serviceTask id="Activity_1kzxaan" name="Cancel Train Ticket Booking" isForCompensation="true" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="CancelTrainBooking">
+    <bpmn:serviceTask id="Activity_1kzxaan" name="Cancel Train Ticket Booking" isForCompensation="true" camunda:asyncBefore="true" camunda:type="external" camunda:topic="CancelTrainBooking">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="TrainBookingID">${TrainBookingID}</camunda:inputParameter>
@@ -97,10 +97,10 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
         </camunda:inputOutput>
       </bpmn:extensionElements>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="Event_0g83clx" attachedToRef="Activity_0fy5rid">
+    <bpmn:boundaryEvent id="Event_0g83clx" camunda:asyncBefore="true" attachedToRef="Activity_0fy5rid">
       <bpmn:compensateEventDefinition id="CompensateEventDefinition_15tkhdg" />
     </bpmn:boundaryEvent>
-    <bpmn:serviceTask id="Activity_0l57gp2" name="Cancel Flight Booking" isForCompensation="true" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="CancelFlightBooking">
+    <bpmn:serviceTask id="Activity_0l57gp2" name="Cancel Flight Booking" isForCompensation="true" camunda:asyncBefore="true" camunda:type="external" camunda:topic="CancelFlightBooking">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="FlightBookingID">${FlightBookingID}</camunda:inputParameter>
@@ -108,10 +108,10 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
         </camunda:inputOutput>
       </bpmn:extensionElements>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="Event_18hendr" attachedToRef="Activity_0nzn307">
+    <bpmn:boundaryEvent id="Event_18hendr" camunda:asyncBefore="true" attachedToRef="Activity_0nzn307">
       <bpmn:compensateEventDefinition id="CompensateEventDefinition_1ccthqq" />
     </bpmn:boundaryEvent>
-    <bpmn:serviceTask id="Activity_09q6afw" name="Cancel Hotel Booking" isForCompensation="true" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="CancelHotelBooking">
+    <bpmn:serviceTask id="Activity_09q6afw" name="Cancel Hotel Booking" isForCompensation="true" camunda:asyncBefore="true" camunda:type="external" camunda:topic="CancelHotelBooking">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="HotelBookingID">${HotelBookingID}</camunda:inputParameter>
@@ -136,7 +136,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
       <bpmn:outgoing>Flow_1j6dnvx</bpmn:outgoing>
       <bpmn:outgoing>Flow_1jzg7yf</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Activity_1ju8g5e" name="Book Train Ticket" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="BookTrain">
+    <bpmn:serviceTask id="Activity_1ju8g5e" name="Book Train Ticket" camunda:asyncBefore="true" camunda:type="external" camunda:topic="BookTrain">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:outputParameter name="TrainBookingID">${TrainBookingID}</camunda:outputParameter>
@@ -146,7 +146,7 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
       <bpmn:incoming>Flow_1xvtvf5</bpmn:incoming>
       <bpmn:outgoing>Flow_12u3j8l</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="Event_119ysv4" attachedToRef="Activity_1ju8g5e">
+    <bpmn:boundaryEvent id="Event_119ysv4" camunda:asyncBefore="true" attachedToRef="Activity_1ju8g5e">
       <bpmn:compensateEventDefinition id="CompensateEventDefinition_1yk7mff" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_1uwkclg" sourceRef="Gateway_09mc27b" targetRef="Gateway_1vonxjj" />
