@@ -1,26 +1,21 @@
-version: "3"
-
 services:
   bookhotel:
     image: philipz/bookhotel
-    container_name: bookhotel
     depends_on:
       - camunda
   
   flightbook:
     image: philipz/flightbook
-    container_name: flightbook
     depends_on:
       - camunda
   
   trainbook:
     image: philipz/trainbook
-    container_name: trainbook
     depends_on:
       - camunda
 
   camunda:
-    image: camunda/camunda-bpm-platform:run-7.21.0
+    image: philipz/camunda-cockpit-plugins:7.21.0
     container_name: camunda
     ports:
       - 8080:8080
