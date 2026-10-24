@@ -1,0 +1,24 @@
+BookingSystemWorkers/BookHotel.js
+  h_1b119f25eaf333 6,11-12,15,17-33,35,38-53
+BookingSystemWorkers/FlightBooking.js
+  h_1b119f25eaf333 6,11-12,15-37,42-60
+BookingSystemWorkers/TrainBooking.js
+  h_1b119f25eaf333 6,11-12,15-33,38-54
+BookingSystemWorkers/package.json
+  h_1b119f25eaf333 2
+Models/BookHolidaySagaPatternV3.bpmn
+  h_1b119f25eaf333 2
+tests/README.md
+  h_1b119f25eaf333 14,21,23,32-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "45bf67076cc8ebb69459ec10a4eefa758a0cb826",
+  "prompts": {},
+  "humans": {
+    "h_1b119f25eaf333": {
+      "author": "philipz <philipzheng@gmail.com>"
+    }
+  }
+}
