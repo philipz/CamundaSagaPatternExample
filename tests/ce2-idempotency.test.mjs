@@ -15,7 +15,6 @@ import { WORKERS, loadWorker, makeTask, makeTaskService, runHandler } from './he
 
 for (const w of WORKERS) {
   test(`CE-2 (BR4): ${w.book} must report the same ${w.idVar} when the task is executed twice`,
-    { todo: `CE-2: ${w.file} mints a new UUID per execution; redelivery books twice` },
     async () => {
       const { handlers } = loadWorker(w.file);
       const handler = handlers.get(w.book);

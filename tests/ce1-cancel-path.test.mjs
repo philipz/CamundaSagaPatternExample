@@ -16,7 +16,6 @@ import { parseBpmn, compensationThrowEvents, endEventsReachableFrom, confirmBran
   from './helpers/bpmn.mjs';
 
 test('CE-1 (BR1): after compensation the process can reach an end event without the confirm task',
-  { todo: 'CE-1: Flow_0u9r45z loops back to Activity_034u6ma; the only exit is confirm = true' },
   async () => {
     const m = await parseBpmn();
     const throws = compensationThrowEvents(m);
@@ -30,7 +29,6 @@ test('CE-1 (BR1): after compensation the process can reach an end event without 
   });
 
 test('CE-1 (BR1): the cancel branch and the confirm branch reach different end events',
-  { todo: 'CE-1: both branches converge on the single end event Event_07xntzc' },
   async () => {
     const m = await parseBpmn();
     const branches = confirmBranches(m);

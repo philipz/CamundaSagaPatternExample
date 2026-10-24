@@ -18,7 +18,6 @@ const byItem = Object.fromEntries(WORKERS.map((w) => [w.item, w]));
 const flight = byItem.Flight;
 
 test('CE-5 (BR5/BR6): BookFlight must report the ID it actually booked',
-  { todo: 'CE-5: FlightBooking.js:21 sets FlightBookingID to a second create_UUID()' },
   async () => {
     const { handlers, logs } = loadWorker(flight.file);
     const ts = makeTaskService();
