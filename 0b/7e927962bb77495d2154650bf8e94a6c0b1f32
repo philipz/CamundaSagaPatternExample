@@ -1,0 +1,14 @@
+Models/BookHolidaySagaPatternV3.bpmn
+  h_1b119f25eaf333 2,20,23,32,87-90,93,104,115,140,181-199,211-213,231,233,269-283,314-315,317,384-403
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0b7e927962bb77495d2154650bf8e94a6c0b1f32",
+  "prompts": {},
+  "humans": {
+    "h_1b119f25eaf333": {
+      "author": "philipz <philipzheng@gmail.com>"
+    }
+  }
+}
