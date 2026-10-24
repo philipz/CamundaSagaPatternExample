@@ -1,0 +1,32 @@
+# verify-lean.sh metric baseline (key=value; integer counts)
+# generated: 2026-10-24T14:42:22+0800
+# project: /Users/cfh00805122/lab/playground/CamundaSagaPatternExample/specs/lean
+# main: specs/lean/Specs/Proofs.lean
+whole_project.lean_files=11
+whole_project.total_lines=3671
+whole_project.lean_code_lines=3128
+main.total_lines=229
+main.lean_code_lines=140
+main.proof_api.public=16
+main.proof_api.private=0
+main.proof_branching.cases=46
+main.proof_branching.by_cases=0
+main.proof_branching.induction=1
+main.proof_branching.total=47
+main.proof_plumbing.have=6
+main.proof_plumbing.show=0
+main.proof_plumbing.suffices=0
+main.proof_plumbing.rw=3
+main.proof_plumbing.total=9
+main.automation.simp=5
+main.automation.simpa=0
+main.automation.omega=0
+main.automation.linarith=0
+main.automation.grind=0
+main.automation.total=5
+main.representation.List_span=0
+main.representation.takeWhile=0
+main.representation.dropWhile=0
+main.representation.getLast?=0
+main.representation.dropLast=0
+main.representation.total=0

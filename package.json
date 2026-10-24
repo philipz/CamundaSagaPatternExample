@@ -1,0 +1,16 @@
+{
+  "name": "camunda-saga-counterexample-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Executable tests for every counterexample in specs/quint/REPORT.md and specs/lean/REPORT.md (CE-1…CE-6, R1, ENV-1). Known violations are marked todo.",
+  "scripts": {
+    "test": "node --test --test-reporter=spec tests/"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "bpmn-moddle": "10.3.1",
+    "camunda-bpmn-moddle": "8.0.2"
+  }
+}
