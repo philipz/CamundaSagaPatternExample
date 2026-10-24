@@ -1,0 +1,7 @@
+instance      BR1   BR2   BR3   BR4   BR5   BR6   BR7   BR8   
+ideal         ✗   ✓   ✓   ✓   ✓   ✓   ✓   ✓   
+asIs          ✗   ✗   ✓   ✓   ✗   ✗   ✗   ✓   
+redelivery    ✗   ✗   ✓   ✗   ✗   ✓   ✗   ✓   
+bookFailure   ✗   ✓   ✓   ✓   ✓   ✓   ✓   ✗   
+cancelFailure ✗   ✓   ✓   ✓   ✓   ✓   ✓   ✗   
+allFaults     ✗   ✗   ✓   ✗   ✗   ✗   ✗   ✗   
