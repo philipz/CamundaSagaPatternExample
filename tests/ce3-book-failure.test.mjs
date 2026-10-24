@@ -20,7 +20,6 @@ import { parseBpmn, BOOK_TASKS, boundaryEventsOf, camundaAttrs } from './helpers
 
 for (const w of WORKERS) {
   test(`CE-3 (BR8): a failing ${w.book} handler must report the failure to the engine`,
-    { todo: `CE-3: ${w.file} has no try/catch; the error escapes into the client, which swallows it` },
     async () => {
       // failure injected where the handler calls out to the supplier
       const { handlers } = loadWorker(w.file, { failOnSet: true });
@@ -38,7 +37,6 @@ for (const w of WORKERS) {
 }
 
 test('CE-3 (BR8): the booking steps need a failure path (error boundary event or error subprocess)',
-  { todo: 'CE-3: Book tasks only carry compensation boundary events; no error event, no subprocess' },
   async () => {
     const m = await parseBpmn();
     const subprocessesWithError = m.ofType('bpmn:SubProcess').filter((sp) =>

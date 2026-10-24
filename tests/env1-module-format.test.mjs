@@ -19,7 +19,6 @@ import { WORKERS, WORKERS_DIR } from './helpers/worker-sandbox.mjs';
 const moduleType = JSON.parse(fs.readFileSync(path.join(WORKERS_DIR, 'package.json'), 'utf8')).type;
 
 test('ENV-1: the worker entry points must load under the package.json module system',
-  { todo: `ENV-1: package.json says type="${moduleType}" but the workers use require()` },
   async () => {
     assert.ok(moduleType === 'module' || moduleType === 'commonjs',
       `unexpected package.json "type": ${moduleType}`);

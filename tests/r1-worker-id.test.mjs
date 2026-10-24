@@ -16,7 +16,6 @@ import assert from 'node:assert/strict';
 import { WORKERS, loadWorker } from './helpers/worker-sandbox.mjs';
 
 test('R1: each worker must configure its own workerId (not the library default "some-random-id")',
-  { todo: 'R1: none of the workers sets workerId; all three fall back to "some-random-id"' },
   async () => {
     const ids = [];
     for (const w of WORKERS) {

@@ -3,38 +3,61 @@ const { Client, logger, Variables } = require("camunda-external-task-client-js")
 // configuration for the Client:
 //  - 'baseUrl': url to the Workflow Engine
 //  - 'logger': utility to automatically log important events
-const config = { baseUrl: "http://camunda:8080/engine-rest", use: logger, asyncResponseTimeout:50000, maxTasks:1 };
+const config = { baseUrl: "http://camunda:8080/engine-rest", use: logger, asyncResponseTimeout:50000, maxTasks:1, workerId: "flight-booking-worker" };
 
 // create a Client instance with custom configuration
 const client = new Client(config);
 
+const bookingCache = new Map();
+
 // susbscribe to the topic: 'BookFlight'
 client.subscribe("BookFlight", async function({ task, taskService }) { 
-  // Put your business logic
-  await new Promise(r => setTimeout(r, 2000));
-  // complete the task
+  try {
+    // Put your business logic
+    await new Promise(r => setTimeout(r, 2000));
+    // complete the task
 
- // Create variables to be returned to the process
-  const processVariables = new Variables();
-  const id = create_UUID();
-  processVariables.set("FlightBookingStatus", "Confirmed");
-  processVariables.set("FlightBookingID", create_UUID());
-// Complete the task
-  await taskService.complete(task, processVariables);
-  console.log(`Flight booking was finished: ${id} ...`);
+    // Create variables to be returned to the process
+    const processVariables = new Variables();
+    const id = bookingCache.get(task.id) || create_UUID();
+    bookingCache.set(task.id, id);
+    processVariables.set("FlightBookingStatus", "Confirmed");
+    processVariables.set("FlightBookingID", id);
+    // Complete the task
+    await taskService.complete(task, processVariables);
+    console.log(`Flight booking was finished: ${id} ...`);
+  } catch (err) {
+    const retries = (task.retries != null ? task.retries : 1) - 1;
+    await taskService.handleFailure(task, {
+      errorMessage: err.message,
+      errorDetails: err.stack,
+      retries: retries < 0 ? 0 : retries,
+      retryTimeout: 1000
+    });
+  }
 });
 
 // susbscribe to the topic: 'CancelFlightBooking'
 client.subscribe("CancelFlightBooking", async function({ task, taskService }) {
-  // Just a little sleep method to show that some work is doing done
-  await new Promise(r => setTimeout(r, 2000));
-  // create variables to be sent back
-  const processVariables = new Variables();
-  processVariables.set("FlightBookingStatus", "Canceled");
-  // complete task
-  await taskService.complete(task, processVariables);
-  const id = task.variables.get('FlightBookingID');
-  console.log(`Flight booking was canceled: ${id} ...`);
+  try {
+    // Just a little sleep method to show that some work is doing done
+    await new Promise(r => setTimeout(r, 2000));
+    // create variables to be sent back
+    const processVariables = new Variables();
+    processVariables.set("FlightBookingStatus", "Canceled");
+    // complete task
+    await taskService.complete(task, processVariables);
+    const id = task.variables.get('FlightBookingID');
+    console.log(`Flight booking was canceled: ${id} ...`);
+  } catch (err) {
+    const retries = (task.retries != null ? task.retries : 1) - 1;
+    await taskService.handleFailure(task, {
+      errorMessage: err.message,
+      errorDetails: err.stack,
+      retries: retries < 0 ? 0 : retries,
+      retryTimeout: 1000
+    });
+  }
 });
 
 

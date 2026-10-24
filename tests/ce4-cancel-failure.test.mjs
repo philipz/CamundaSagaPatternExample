@@ -16,7 +16,6 @@ import { WORKERS, loadWorker, makeTask, makeTaskService, runHandler } from './he
 
 for (const w of WORKERS) {
   test(`CE-4 (BR8): a failing ${w.cancel} handler must call handleFailure with fewer retries`,
-    { todo: `CE-4: ${w.file} has no error handling on ${w.cancel}; compensation waits forever silently` },
     async () => {
       const { handlers } = loadWorker(w.file, { failOnSet: true });
       const ts = makeTaskService();

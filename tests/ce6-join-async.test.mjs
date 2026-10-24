@@ -22,7 +22,6 @@ import assert from 'node:assert/strict';
 import { parseBpmn, BOOK_TASKS, camundaAttrs } from './helpers/bpmn.mjs';
 
 test('CE-6 (BR4): the bookings feeding the parallel join must not complete inside the join transaction',
-  { todo: 'CE-6: Book Flight/Train use camunda:asyncBefore, so a join collision rolls complete() back' },
   async () => {
     const m = await parseBpmn();
     const join = m.ofType('bpmn:ParallelGateway').find((g) => m.incoming(g.id).length === 2);
@@ -40,7 +39,6 @@ test('CE-6 (BR4): the bookings feeding the parallel join must not complete insid
   });
 
 test('CE-6 (BR4): V2 (asyncAfter) and V3 (asyncBefore) must not disagree about the join race',
-  { todo: 'CE-6: the two models differ exactly on this point; the regression is documented here' },
   async () => {
     const v3 = await parseBpmn();
     const { MODELS_DIR } = await import('./helpers/bpmn.mjs');

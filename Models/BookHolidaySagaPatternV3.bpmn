@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1fnue5w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.25.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1fnue5w" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.37.0">
   <bpmn:process id="BookHolidaySagaPatternV3" name="Book Holiday with Saga Pattern" isExecutable="true" camunda:historyTimeToLive="P180D">
     <bpmn:startEvent id="StartEvent_1" camunda:initiator="holidayGoer">
       <bpmn:extensionElements>
@@ -67,7 +67,6 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1e75ewe</bpmn:incoming>
-      <bpmn:incoming>Flow_0u9r45z</bpmn:incoming>
       <bpmn:outgoing>Flow_18ldu07</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_0a95wau" sourceRef="StartEvent_1" targetRef="Gateway_09mc27b" />
@@ -85,10 +84,8 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
     </bpmn:sequenceFlow>
     <bpmn:intermediateThrowEvent id="Event_1y70am0" name="Cancel Bookings" camunda:asyncBefore="true">
       <bpmn:incoming>Flow_1sa2b0f</bpmn:incoming>
-      <bpmn:outgoing>Flow_0u9r45z</bpmn:outgoing>
       <bpmn:compensateEventDefinition id="CompensateEventDefinition_0v5vhay" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_0u9r45z" sourceRef="Event_1y70am0" targetRef="Activity_034u6ma" />
     <bpmn:serviceTask id="Activity_1kzxaan" name="Cancel Train Ticket Booking" isForCompensation="true" camunda:asyncBefore="true" camunda:type="external" camunda:topic="CancelTrainBooking">
       <bpmn:extensionElements>
         <camunda:inputOutput>
@@ -278,13 +275,6 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1298" y="435" width="15" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0u9r45z_di" bpmnElement="Flow_0u9r45z">
-        <di:waypoint x="1378" y="460" />
-        <di:waypoint x="1440" y="460" />
-        <di:waypoint x="1440" y="530" />
-        <di:waypoint x="1160" y="530" />
-        <di:waypoint x="1160" y="417" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1j6dnvx_di" bpmnElement="Flow_1j6dnvx">
         <di:waypoint x="485" y="310" />

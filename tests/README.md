@@ -11,16 +11,16 @@
 
 ```sh
 npm install          # 第一次（若 ~/.npm 有權限問題：npm install --cache .npm）
-npm test             # 29 個測試：12 pass、17 todo（= 17 條已確認的違規）
+npm test             # 29 個測試：29 pass、0 todo、0 fail
 ```
 
 目前結果：
 
 ```
 ℹ tests 29
-ℹ pass 12
+ℹ pass 29
 ℹ fail 0
-ℹ todo 17
+ℹ todo 0
 ```
 
 單一檔案：`node --test tests/ce5-flight-ref.test.mjs`
@@ -29,14 +29,14 @@ npm test             # 29 個測試：12 pass、17 todo（= 17 條已確認的�
 
 | 反例 | 規則 | 測試檔案 | 測試數 | 目前 |
 |---|---|---|---|---|
-| **CE-1** 取消後仍以「確認」結束 | BR1 | [ce1-cancel-path.test.mjs](ce1-cancel-path.test.mjs) | 2 | todo（違規） |
-| **CE-2** 重送導致重複訂位 | BR4/BR5/BR2/BR7 | [ce2-idempotency.test.mjs](ce2-idempotency.test.mjs) | 3（F/T/H 各一） | todo（違規） |
-| **CE-3** 訂位失敗永遠卡住 | BR8 | [ce3-book-failure.test.mjs](ce3-book-failure.test.mjs) | 4（3 worker + 1 BPMN） | todo（違規） |
-| **CE-4** 取消失敗補償卡住 | BR8 | [ce4-cancel-failure.test.mjs](ce4-cancel-failure.test.mjs) | 3 | todo（違規） |
-| **CE-5** Flight 回寫 ID ≠ 實際訂位 | BR5/BR6/BR2/BR7 | [ce5-flight-ref.test.mjs](ce5-flight-ref.test.mjs) | 1 todo + 2 對照 | todo（違規）；T/H 對照 **pass** |
-| **CE-6** join 衝突導致重複訂位 | BR4 | [ce6-join-async.test.mjs](ce6-join-async.test.mjs) | 2 | todo（違規） |
-| **R1** worker 共用預設 `workerId` | — | [r1-worker-id.test.mjs](r1-worker-id.test.mjs) | 1 | todo（違規） |
-| **ENV-1** `type: module` 與 `require` 衝突 | — | [env1-module-format.test.mjs](env1-module-format.test.mjs) | 1 | todo（違規） |
+| **CE-1** 取消後仍以「確認」結束 | BR1 | [ce1-cancel-path.test.mjs](ce1-cancel-path.test.mjs) | 2 | **pass**（已修復） |
+| **CE-2** 重送導致重複訂位 | BR4/BR5/BR2/BR7 | [ce2-idempotency.test.mjs](ce2-idempotency.test.mjs) | 3（F/T/H 各一） | **pass**（已修復） |
+| **CE-3** 訂位失敗永遠卡住 | BR8 | [ce3-book-failure.test.mjs](ce3-book-failure.test.mjs) | 4（3 worker + 1 BPMN） | **pass**（已修復） |
+| **CE-4** 取消失敗補償卡住 | BR8 | [ce4-cancel-failure.test.mjs](ce4-cancel-failure.test.mjs) | 3 | **pass**（已修復） |
+| **CE-5** Flight 回寫 ID ≠ 實際訂位 | BR5/BR6/BR2/BR7 | [ce5-flight-ref.test.mjs](ce5-flight-ref.test.mjs) | 1 修復 + 2 對照 | **pass**（已修復） |
+| **CE-6** join 衝突導致重複訂位 | BR4 | [ce6-join-async.test.mjs](ce6-join-async.test.mjs) | 2 | **pass**（已修復） |
+| **R1** worker 共用預設 `workerId` | — | [r1-worker-id.test.mjs](r1-worker-id.test.mjs) | 1 | **pass**（已修復） |
+| **ENV-1** `type: module` 與 `require` 衝突 | — | [env1-module-format.test.mjs](env1-module-format.test.mjs) | 1 | **pass**（已修復） |
 | 基準（happy path、BR3、補償接線） | — | [baseline.test.mjs](baseline.test.mjs) | 6 | **pass** |
 | 函式庫契約（F7/F8、`complete()` 吞錯） | — | [library-contract.test.mjs](library-contract.test.mjs) | 4 | **pass** |
 
