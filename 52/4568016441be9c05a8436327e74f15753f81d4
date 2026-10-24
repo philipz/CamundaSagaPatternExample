@@ -1,0 +1,168 @@
+package-lock.json
+  h_1b119f25eaf333 1-86
+package.json
+  h_1b119f25eaf333 1-16
+specs/lean/.gitignore
+  h_1b119f25eaf333 1
+specs/lean/Audit.lean
+  h_1b119f25eaf333 1-47
+specs/lean/MODEL-MAP.md
+  h_1b119f25eaf333 1-178
+specs/lean/REPORT.md
+  h_1b119f25eaf333 1-182
+specs/lean/RULES.md
+  h_1b119f25eaf333 1-133
+specs/lean/Specs.lean
+  h_1b119f25eaf333 1-10
+specs/lean/Specs/Examples.lean
+  h_1b119f25eaf333 1-70
+specs/lean/Specs/Lemmas.lean
+  h_1b119f25eaf333 1-562
+specs/lean/Specs/Model.lean
+  h_1b119f25eaf333 1-288
+specs/lean/Specs/Proofs.lean
+  h_1b119f25eaf333 1-229
+specs/lean/Specs/Reachability.lean
+  h_1b119f25eaf333 1-104
+specs/lean/Specs/Rules.lean
+  h_1b119f25eaf333 1-96
+specs/lean/Specs/Scenarios.lean
+  h_1b119f25eaf333 1-56
+specs/lean/Specs/Trace.lean
+  h_1b119f25eaf333 1-75
+specs/lean/Specs/Traces.lean
+  h_1b119f25eaf333 1-2090
+specs/lean/gen_traces.py
+  h_1b119f25eaf333 1-149
+specs/lean/headline-theorems.txt
+  h_1b119f25eaf333 1-36
+specs/lean/lake-manifest.json
+  h_1b119f25eaf333 1-6
+specs/lean/lakefile.toml
+  h_1b119f25eaf333 1-7
+specs/lean/lean-toolchain
+  h_1b119f25eaf333 1
+specs/lean/metrics-baseline.txt
+  h_1b119f25eaf333 1-32
+specs/lean/verify-result.json
+  h_1b119f25eaf333 1-102
+specs/quint/README.md
+  h_1b119f25eaf333 1-89
+specs/quint/REPORT.md
+  h_1b119f25eaf333 1-251
+specs/quint/bookHoliday.qnt
+  h_1b119f25eaf333 1-445
+specs/quint/bookHolidayInstances.qnt
+  h_1b119f25eaf333 1-39
+specs/quint/bookHoliday_test.qnt
+  h_1b119f25eaf333 1-137
+specs/quint/matrix.txt
+  h_1b119f25eaf333 1-7
+specs/quint/run_all.sh
+  h_1b119f25eaf333 1-41
+specs/quint/summarize_trace.py
+  h_1b119f25eaf333 1-79
+specs/quint/traces/allFaults__BR1.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/allFaults__BR1.md
+  h_1b119f25eaf333 1-35
+specs/quint/traces/allFaults__BR2.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/allFaults__BR2.md
+  h_1b119f25eaf333 1-25
+specs/quint/traces/allFaults__BR4.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/allFaults__BR4.md
+  h_1b119f25eaf333 1-15
+specs/quint/traces/allFaults__BR5.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/allFaults__BR5.md
+  h_1b119f25eaf333 1-25
+specs/quint/traces/allFaults__BR6.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/allFaults__BR6.md
+  h_1b119f25eaf333 1-30
+specs/quint/traces/allFaults__BR7.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/allFaults__BR7.md
+  h_1b119f25eaf333 1-35
+specs/quint/traces/allFaults__BR8.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/allFaults__BR8.md
+  h_1b119f25eaf333 1-10
+specs/quint/traces/asIs__BR1.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/asIs__BR1.md
+  h_1b119f25eaf333 1-16
+specs/quint/traces/asIs__BR2.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/asIs__BR2.md
+  h_1b119f25eaf333 1-25
+specs/quint/traces/asIs__BR5.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/asIs__BR5.md
+  h_1b119f25eaf333 1-15
+specs/quint/traces/asIs__BR6.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/asIs__BR6.md
+  h_1b119f25eaf333 1-22
+specs/quint/traces/asIs__BR7.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/asIs__BR7.md
+  h_1b119f25eaf333 1-16
+specs/quint/traces/bookFailure__BR1.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/bookFailure__BR1.md
+  h_1b119f25eaf333 1-16
+specs/quint/traces/bookFailure__BR8.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/bookFailure__BR8.md
+  h_1b119f25eaf333 1-9
+specs/quint/traces/cancelFailure__BR1.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/cancelFailure__BR1.md
+  h_1b119f25eaf333 1-36
+specs/quint/traces/cancelFailure__BR8.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/cancelFailure__BR8.md
+  h_1b119f25eaf333 1-16
+specs/quint/traces/ideal__BR1.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/ideal__BR1.md
+  h_1b119f25eaf333 1-26
+specs/quint/traces/redelivery__BR1.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/redelivery__BR1.md
+  h_1b119f25eaf333 1-19
+specs/quint/traces/redelivery__BR2.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/redelivery__BR2.md
+  h_1b119f25eaf333 1-22
+specs/quint/traces/redelivery__BR4.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/redelivery__BR4.md
+  h_1b119f25eaf333 1-14
+specs/quint/traces/redelivery__BR5.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/redelivery__BR5.md
+  h_1b119f25eaf333 1-27
+specs/quint/traces/redelivery__BR7.itf.json
+  h_1b119f25eaf333 1
+specs/quint/traces/redelivery__BR7.md
+  h_1b119f25eaf333 1-19
+tests/helpers/bpmn.mjs
+  h_1b119f25eaf333 1-109
+tests/helpers/worker-sandbox.mjs
+  h_1b119f25eaf333 1-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "524568016441be9c05a8436327e74f15753f81d4",
+  "prompts": {},
+  "humans": {
+    "h_1b119f25eaf333": {
+      "author": "philipz <philipzheng@gmail.com>"
+    }
+  }
+}
