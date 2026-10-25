@@ -5,7 +5,9 @@
   "description": "Executable tests for every counterexample in specs/quint/REPORT.md and specs/lean/REPORT.md (CE-1…CE-6, R1, ENV-1). Known violations are marked todo.",
   "scripts": {
     "test": "node --test --test-reporter=spec \"tests/*.test.mjs\"",
-    "test:watch": "node --test --watch \"tests/*.test.mjs\""
+    "test:watch": "node --test --watch \"tests/*.test.mjs\"",
+    "simulate": "node run-saga.mjs",
+    "simulate:cancel": "node run-saga.mjs --cancel"
   },
   "engines": {
     "node": ">=22"
