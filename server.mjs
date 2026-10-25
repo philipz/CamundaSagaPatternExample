@@ -7,7 +7,11 @@ import { loadBpmnForBpmnKit } from './tests/helpers/bpmnkit.mjs';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const V3_PATH = path.join(__dirname, 'Models', 'BookHolidaySagaPatternV3.bpmn');
-const PORT = process.env.PORT || 3000;
+// Parse CLI port (--port 8080 or -p 8080) or process.env.PORT
+const cliArgs = process.argv.slice(2);
+const portFlagIndex = cliArgs.findIndex((arg) => arg === '--port' || arg === '-p');
+const cliPort = portFlagIndex !== -1 && cliArgs[portFlagIndex + 1] ? Number(cliArgs[portFlagIndex + 1]) : null;
+const PORT = cliPort || (process.env.PORT ? Number(process.env.PORT) : 3000);
 
 // Delay helper to make UI animations clear and observable
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
