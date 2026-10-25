@@ -71,17 +71,15 @@ execution.setVariable("HotelBookingStatus", "No Booking Made");
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_0a95wau" sourceRef="StartEvent_1" targetRef="Gateway_09mc27b" />
     <bpmn:sequenceFlow id="Flow_1e75ewe" sourceRef="Activity_0nzn307" targetRef="Activity_034u6ma" />
-    <bpmn:exclusiveGateway id="Gateway_1vtaf28" name="Do you want to cancel your trip?">
+    <bpmn:exclusiveGateway id="Gateway_1vtaf28" name="Do you want to cancel your trip?" default="Flow_1sa2b0f">
       <bpmn:incoming>Flow_18ldu07</bpmn:incoming>
       <bpmn:outgoing>Flow_00gdo4p</bpmn:outgoing>
       <bpmn:outgoing>Flow_1sa2b0f</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_00gdo4p" name="Yes" sourceRef="Gateway_1vtaf28" targetRef="Event_07xntzc">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{confirm}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${confirm==true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1sa2b0f" name="No" sourceRef="Gateway_1vtaf28" targetRef="Event_1y70am0">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{not confirm}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1sa2b0f" name="No" sourceRef="Gateway_1vtaf28" targetRef="Event_1y70am0" />
     <bpmn:intermediateThrowEvent id="Event_1y70am0" name="Cancel Bookings" camunda:asyncBefore="true">
       <bpmn:incoming>Flow_1sa2b0f</bpmn:incoming>
       <bpmn:incoming>Flow_0r41ptj</bpmn:incoming>
