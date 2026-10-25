@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WanderSaga 旅遊訂票 - BPMN Saga 模式即時模擬系統</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <!-- 背景流光特效 -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">✈️</div>
+        <div>
+          <h1 class="logo-title">WanderSaga 旅遊訂票</h1>
+          <p class="logo-subtitle">基於 <code>@bpmnkit/engine</code> 的微服務 Saga 補償模式即時展示</p>
+        </div>
+      </div>
+      <div class="header-status">
+        <span class="engine-badge"><span class="pulse-dot"></span>bpmnkit 原生邊緣引擎</span>
+        <span class="mode-badge">零伺服器依賴模式</span>
+      </div>
+    </header>
+
+    <!-- 主工作區 Grid -->
+    <main class="main-grid">
+      <!-- 左側：訂票表單與情境預設 -->
+      <section class="card control-card">
+        <div class="card-header">
+          <h2>📋 旅遊訂票需求</h2>
+          <span class="card-tag">啟動事件 (StartEvent)</span>
+        </div>
+
+        <form id="booking-form" class="booking-form">
+          <div class="form-group">
+            <label for="passenger-name">旅客姓名</label>
+            <input type="text" id="passenger-name" value="王大明 (David Wang)" required placeholder="請輸入旅客姓名">
+          </div>
+
+          <div class="form-group">
+            <label for="destination">旅遊目的地</label>
+            <select id="destination">
+              <option value="東京 (Tokyo)">🇯🇵 東京 (Tokyo) 5天4夜</option>
+              <option value="花蓮 (Hualien)">🇹🇼 花蓮 (Hualien) 3天2夜</option>
+              <option value="巴黎 (Paris)">🇫🇷 巴黎 (Paris) 7天6夜</option>
+              <option value="瑞士 (Swiss)">🇨🇭 瑞士阿爾卑斯 6天5夜</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="section-label">包含的交通與住宿項目 (BPMN 分支條件)</label>
+            <div class="checkbox-group">
+              <label class="custom-checkbox">
+                <input type="checkbox" id="need-flight" checked>
+                <span class="checkbox-mark"></span>
+                <span class="checkbox-text">
+                  <strong>🛫 航空機票 (FlightBooking)</strong>
+                  <small>條件：<code>flightNeeded = true</code></small>
+                </span>
+              </label>
+
+              <label class="custom-checkbox">
+                <input type="checkbox" id="need-train" checked>
+                <span class="checkbox-mark"></span>
+                <span class="checkbox-text">
+                  <strong>🚆 觀光鐵路票 (TrainBooking)</strong>
+                  <small>條件：<code>trainTicketNeeded = true</code></small>
+                </span>
+              </label>
+
+              <label class="custom-checkbox disabled">
+                <input type="checkbox" id="need-hotel" checked disabled>
+                <span class="checkbox-mark"></span>
+                <span class="checkbox-text">
+                  <strong>🏨 頂級渡假飯店 (BookHotel)</strong>
+                  <small>必要項目 (平行匯合核心)</small>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn btn-primary btn-block">
+            <span>🚀 送出訂票並啟動 Saga 流程</span>
+          </button>
+        </form>
+
+        <!-- 快捷預設情境 -->
+        <div class="presets-section">
+          <h3>⚡ 快捷測試情境 (Quick Presets)</h3>
+          <div class="presets-grid">
+            <button type="button" class="preset-btn" id="preset-all">
+              <span class="preset-icon">🌟</span>
+              <div>
+                <strong>全包自由行</strong>
+                <small>機票 + 火車 + 飯店</small>
+              </div>
+            </button>
+
+            <button type="button" class="preset-btn" id="preset-train-only">
+              <span class="preset-icon">🚆</span>
+              <div>
+                <strong>國內鐵道漫遊</strong>
+                <small>火車 + 飯店 (無機票)</small>
+              </div>
+            </button>
+
+            <button type="button" class="preset-btn" id="preset-flight-only">
+              <span class="preset-icon">🛫</span>
+              <div>
+                <strong>商務直飛客</strong>
+                <small>機票 + 飯店 (無火車)</small>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 右側：Saga 即時儀表板與流程狀態 -->
+      <section class="dashboard-area">
+        <!-- 流程進行狀態總覽 -->
+        <div class="card status-overview-card">
+          <div class="status-overview-header">
+            <div>
+              <span class="status-subtitle">訂單編號</span>
+              <h2 id="current-booking-id" class="mono-text">尚未開始</h2>
+            </div>
+            <div id="overall-status-pill" class="status-pill idle">閒置中 (Ready)</div>
+          </div>
+
+          <!-- BPMN 當前節點 Breadcrumb / 進度條 -->
+          <div class="bpmn-current-step">
+            <div class="step-label">目前 BPMN 執行節點：</div>
+            <div id="active-step-badge" class="step-badge">等待訂票啟動...</div>
+          </div>
+        </div>
+
+        <!-- 微服務卡片三欄展示 -->
+        <div class="services-grid">
+          <!-- 機票卡片 -->
+          <div class="service-card" id="card-flight">
+            <div class="service-header">
+              <div class="service-icon">🛫</div>
+              <div>
+                <h3>航空公司訂位</h3>
+                <span class="topic-tag">Topic: BookFlight</span>
+              </div>
+            </div>
+            <div class="service-status">
+              <span class="status-dot"></span>
+              <span class="status-text" id="status-flight">等待處理</span>
+            </div>
+            <div class="service-details">
+              <div class="detail-row">
+                <span>訂位狀態:</span>
+                <strong id="val-flight-status">-</strong>
+              </div>
+              <div class="detail-row">
+                <span>電子機票號:</span>
+                <strong id="val-flight-id" class="mono-text">-</strong>
+              </div>
+            </div>
+            <div class="compensation-badge" id="comp-flight">
+              🔄 補償標籤: CancelFlightBooking
+            </div>
+          </div>
+
+          <!-- 火車卡片 -->
+          <div class="service-card" id="card-train">
+            <div class="service-header">
+              <div class="service-icon">🚆</div>
+              <div>
+                <h3>鐵路局車票劃位</h3>
+                <span class="topic-tag">Topic: BookTrain</span>
+              </div>
+            </div>
+            <div class="service-status">
+              <span class="status-dot"></span>
+              <span class="status-text" id="status-train">等待處理</span>
+            </div>
+            <div class="service-details">
+              <div class="detail-row">
+                <span>劃位狀態:</span>
+                <strong id="val-train-status">-</strong>
+              </div>
+              <div class="detail-row">
+                <span>車票流水號:</span>
+                <strong id="val-train-id" class="mono-text">-</strong>
+              </div>
+            </div>
+            <div class="compensation-badge" id="comp-train">
+              🔄 補償標籤: CancelTrainBooking
+            </div>
+          </div>
+
+          <!-- 飯店卡片 -->
+          <div class="service-card" id="card-hotel">
+            <div class="service-header">
+              <div class="service-icon">🏨</div>
+              <div>
+                <h3>渡假飯店預留</h3>
+                <span class="topic-tag">Topic: BookHotel</span>
+              </div>
+            </div>
+            <div class="service-status">
+              <span class="status-dot"></span>
+              <span class="status-text" id="status-hotel">等待處理</span>
+            </div>
+            <div class="service-details">
+              <div class="detail-row">
+                <span>預訂狀態:</span>
+                <strong id="val-hotel-status">-</strong>
+              </div>
+              <div class="detail-row">
+                <span>訂房確認碼:</span>
+                <strong id="val-hotel-id" class="mono-text">-</strong>
+              </div>
+            </div>
+            <div class="compensation-badge" id="comp-hotel">
+              🔄 補償標籤: CancelHotelBooking
+            </div>
+          </div>
+        </div>
+
+        <!-- User Task 互動卡片（核對明細與決策） -->
+        <div class="card decision-card" id="decision-panel">
+          <div class="decision-header">
+            <div class="user-task-tag">👤 User Task: Check Booking Details (Activity_034u6ma)</div>
+            <h2>行程核對完成！請選擇後續決策：</h2>
+            <p>目前所有選取的微服務皆已順利保留配額。請在下方確認出發，或立即發動 Saga 逆向補償撤銷行程。</p>
+          </div>
+
+          <div class="decision-actions">
+            <button type="button" id="btn-confirm" class="btn btn-success btn-lg">
+              <span>✅ 確認出發 (Happy Path)</span>
+              <small>confirm = true ➔ 完成旅程 (Trip completed)</small>
+            </button>
+
+            <button type="button" id="btn-cancel" class="btn btn-danger btn-lg">
+              <span>❌ 取消行程並退訂 (Saga 補償)</span>
+              <small>confirm = false ➔ 觸發 Cancel Bookings 補償事件</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- BPMN 事件即時稽核日誌 (Live Audit Log) -->
+        <div class="card log-card">
+          <div class="log-header">
+            <h3>📜 BPMN 即時執行日誌 (Event Stream)</h3>
+            <button type="button" id="clear-logs-btn" class="btn-text">清除日誌</button>
+          </div>
+          <div class="log-terminal" id="log-console">
+            <div class="log-line info">
+              <span class="log-time">[系統就緒]</span>
+              <span class="log-msg">@bpmnkit/engine 已載入 BookHolidaySagaPatternV3.bpmn 模型</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
