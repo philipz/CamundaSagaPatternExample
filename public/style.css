@@ -772,13 +772,14 @@ input[type="text"]:focus, select:focus {
   box-shadow: 0 6px 24px rgba(239, 68, 68, 0.5);
 }
 
-/* 即時日誌卡片 */
+/* 即時日誌卡片 (高度固定、支援滑動 bar) */
 .log-card {
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 1 1 0;
   min-height: 280px;
+  overflow: hidden;
 }
 
 .log-header {
@@ -786,6 +787,7 @@ input[type="text"]:focus, select:focus {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .log-header h3 {
@@ -812,18 +814,43 @@ input[type="text"]:focus, select:focus {
   padding: 12px 14px;
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  flex: 1;
-  min-height: 200px;
+  flex: 1 1 0;
+  height: 0;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(59, 130, 246, 0.5) rgba(0, 0, 0, 0.25);
+}
+
+/* 自訂滑動 Bar (Webkit Scrollbar) */
+.log-terminal::-webkit-scrollbar {
+  width: 7px;
+}
+
+.log-terminal::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+}
+
+.log-terminal::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.4);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.log-terminal::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.7);
 }
 
 .log-line {
   display: flex;
   gap: 8px;
   word-break: break-all;
+  flex-shrink: 0;
 }
 
 .log-time {
