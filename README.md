@@ -1,118 +1,146 @@
-# Camunda Saga Pattern Example
+# WanderSaga - BPMN Saga Pattern Example
 
-This is an example of how to model the Saga Pattern by taking a distributed group of microservices and have them orchestrated asynchronously using Camunda and BPMN. 
+> 基於 **`@bpmnkit/engine`** 與 **Cloudflare Workers** 的微服務 Saga 補償模式現代化無伺服器邊緣實現。
 
-It involves 3 groups of independend components. 
-1. The Camunda Platform Run
-1. A BPMN model created by the Camunda Modeler
-1. JavaScript Microservice Workers
+🌐 **線上 PoC 示範**：**[https://wandersaga.philipz.workers.dev/](https://wandersaga.philipz.workers.dev/)**
 
-Camunda Run is at the center of everything. The modeles are deployed to it and the services are resigster for work to it.
+---
+
+## 📖 專案簡介 (Overview)
+
+本專案展示如何透過 **BPMN 2.0** 規範與 **Saga 補償模式 (Saga Pattern)** 來編排非同步分散式微服務（機票預訂、火車劃位、飯店保留）。
+
+專案已從早期依賴龐大 Java / Spring Boot Camunda 7 伺服器與 Docker 的架構，全面遷移至以 **`@bpmnkit/engine`** 為核心的**純 JavaScript/TypeScript 現代邊緣架構**。在**不依賴任何外部持久性資料庫**的前提下，直接於 Cloudflare 邊緣節點上秒級執行流程流轉、人工決策核對與全自動逆向退訂補償。
 
 ![Overview](./img/Overview.png)
 
-## Understanding the Components
+---
 
-## The Camunda Platform Run
-This is a Spring Boot application that contains the Camunda Engine, The Camunda Webapps and The REST API.
+## 🏗️ 架構演進與技術棧 (Architecture & Tech Stack)
 
-You can deploy processes to it via the modeler, start process instance, administrate them and step through them as an end user.
+| 維度 | 早期架構 (Camunda 7) | 現行邊緣架構 (WanderSaga) |
+| :--- | :--- | :--- |
+| **流程執行引擎** | Camunda Platform Run (Java / Spring Boot JAR) | **`@bpmnkit/engine`**（純 TS、Zero-dependency、邊緣原生） |
+| **部署與運行環境** | 本地 Docker 容器 (`camunda-bpm-platform:run-latest`) | **Cloudflare Workers** (全球 V8 Isolate 邊緣節點) |
+| **靜態資源託管** | Spring Boot 靜態目錄 | **Cloudflare Workers Static Assets** (全球 CDN 快取) |
+| **微服務通訊** | HTTP REST `fetchAndLock` 長輪詢 (高延遲/頻寬開銷) | **同駐邊緣微服務 + WebSocket Edge Session** (零輪詢開銷) |
+| **前端與即時進度** | Camunda Cockpit / Tasklist | **客製化現代旅遊 Web 儀表板** (Glassmorphism + 即時日誌) |
+| **可觀測性** | 日誌檔案與資料庫記錄 | **Cloudflare Workers Observability** (100% 邊緣請求追蹤) |
 
-## The BPMN Process Models
-There are two process modeles in this repo. The first shows how a series of services and be used to book a holiday.
+---
 
-![book a holiday ](./Models/BookHolidayV1.png)
+## 🔄 Saga 補償模式與 BPMN 流程 (Workflow Design)
 
-The second model has the same hotel booking feature, with the addtion of being able to reverse the actions made based on the user's choice.
+流程定義於 [`Models/BookHolidaySagaPatternV3.bpmn`](./Models/BookHolidaySagaPatternV3.bpmn)：
 
 ![Book a holiday saga](./Models/BookHolidaySagaPatternV2.png)
 
-The importand addtion is the use of compensation in the process. A `Compensation Throw Event` is thrown and any task that had been previously completed and has a `Compensation Catch Event`attached to it will running the `Compensation Task`linked to it. Thus implementing the Saga Pattern.
+### 執行生命週期解析：
+1. **平行預訂階段 (Parallel Booking)**：
+   - 流程啟動後，依據輸入參數同時向三個微服務派發工作：
+     - 🛫 **BookFlight** (`camunda:topic="BookFlight"`)
+     - 🚆 **BookTrain** (`camunda:topic="BookTrain"`)
+     - 🏨 **BookHotel** (`camunda:topic="BookHotel"`)
+   - 每個完成的任務皆由 BPMN 引擎自動關聯其對應的補償邊界事件 (`bpmn:CompensateEventDefinition`)。
+2. **人工核對決策 (User Task)**：
+   - 三個微服務全數保留配額後，流程停駐於 `Activity_034u6ma`（Check Booking Details）。
+   - 前端跳出浮層對話框，供使用者進行最終確認。
+3. **路徑分岐 (Exclusive Gateway)**：
+   - **確認出發 (`confirm = true`)**：走向 Happy Path，抵達 `Trip completed` 結束事件。
+   - **取消行程 (`confirm = false`)**：流程拋出 `Cancel Bookings` 中間補償事件 (`bpmn:IntermediateThrowEvent`)，引擎**自動依已完成項目的逆序**呼叫補償處理器：
+     1. 🔄 `CancelHotelBooking`（飯店取消退房）
+     2. 🔄 `CancelFlightBooking`（機票全額退費）
+     3. 🔄 `CancelTrainBooking`（火車退票劃位撤銷）
+   - 最終安全抵達 `Trip Canceled` 結束事件。
 
-You can find out more details about [compensation and BPMN in the docs.](https://docs.camunda.org/manual/7.14/reference/bpmn20/events/cancel-and-compensation-events/#compensation-events) 
+---
 
-## The External Task Workers (Microservices)
-These are independent services written in java script which subscripe to the Camunda Patform for a `Topic`. The services will then be given any work for that topic. It works be defining the topic as part of the model and then having the worker subscripte to the topic of the same name. 
+## 🚀 快速開始 (Quick Start)
 
-The model semandics are descriped as follows:
-![External Service Task](./img/ExternalServiceTask.png)
+### 1. 環境需求
+- Node.js >= 20
+- npm >= 9
 
-The Worker then needs to subscribe to the same topic - In this case it's `BookFlight`
-```JavaScript
-// susbscribe to the topic: 'BookFlight'
-client.subscribe("BookFlight", async function({ task, taskService }) { 
-  // Put your business logic
-  await new Promise(r => setTimeout(r, 2000));
-  // complete the task
-
- // Create variables to be returned to the process
- const processVariables = new Variables();
-  processVariables.set("FlightBookingStatus", "Confirmed");
-  processVariables.set("FlightBookingID", create_UUID());
-// Complete the task
-  await taskService.complete(task, processVariables);
-});
-```
-
-Workers can often subscribe to more than one topic, especially in the case where the work falls into the same context or responsibility. In this example the worker responsible for making a booking is also responsibile for canceling a booking. So the worker has a second subscription.
-
-```JavaScript
-// susbscribe to the topic: 'CancelFlightBooking'
-client.subscribe("CancelFlightBooking", async function({ task, taskService }) {
-  // Just a little sleep method to show that some work is doing done
-  await new Promise(r => setTimeout(r, 2000));
-  // create variables to be sent back
-  const processVariables = new Variables();
-  processVariables.set("FlightBookingStatus", "Canceled");
-  // complete task
-  await taskService.complete(task, processVariables);
-});
-```
-
-## Installation
-As I mentioned there are three components and each needing to be installed (but it's all pretty easy)
-
-### Intalling Camunda Platform Run 
-
-You can choose here to either follow the instructions to [intall Camunda Platform Run ](https://docs.camunda.org/manual/latest/installation/camunda-bpm-run/)  on the docs page **OR** You can start is up using docker
- with the following command
+### 2. 安裝依賴
 ```sh
-docker pull camunda/camunda-bpm-platform:run-latest
-docker run -d --name camunda -p 8080:8080 camunda/camunda-bpm-platform:run-latest 
+npm install
 ```
-### Deploying the process Modeles
-The process models are part of this repo in the ``./Models/`` folder. You deploy them by downloading the [Camunda Modeler](https://camunda.com/download/modeler/), opening them up and useing the depoly button. if successful, you should see them in Camunda cockpit.
 
-
-### Installing the Microservice Workers
-There are 3 micoservices built using the offical [External Task Client](https://github.com/camunda/camunda-external-task-client-js). 
-
-NodeJS >= v10 is required
-
+### 3. 本地啟動 Web 旅遊訂票互動系統
 ```sh
-npm install -s camunda-external-task-client-js
+npm start
+# 預設啟動於 http://localhost:3000
+```
+若 Port 3000 已被其他應用佔用，可自由指定其他 Port：
+```sh
+PORT=8080 npm start
+# 或
+npm start -- --port 8080
 ```
 
-Or:
+### 4. 本地 CLI 模擬執行 (不用開瀏覽器)
+```sh
+# 測試 1：正向出發 (Happy Path)
+npm run simulate
+
+# 測試 2：取消行程並觸發 Saga 逆向補償
+npm run simulate:cancel
+
+# 測試 3：進階自訂參數 (不訂機票並取消)
+node run-saga.mjs --cancel --no-flight
+```
+
+---
+
+## 🧪 自動化測試套件 (Automated Tests)
+
+本專案將 [specs/quint/REPORT.md](specs/quint/REPORT.md) 與 [specs/lean/REPORT.md](specs/lean/REPORT.md) 的形式化反例全部轉化為可自動執行的整合測試：
 
 ```sh
-yarn add camunda-external-task-client-js
+npm test
 ```
 
-If successful you'll see the ``node_module`` folder appear.
+目前共包含 **32 個測試，全數通過 (32 pass, 0 fail, 0 todo)**：
+- **CE-1 ~ CE-6**：補償路徑不可達、重送冪等性、失敗中斷、ID 一致性、Join 異步衝突反例驗證。
+- **R1 / ENV-1**：Worker ID 隔離與 ESM 模組格式契約。
+- **BPMNKit Saga 本地模擬測試**：驗證真實流程引擎在 Happy Path、全額退訂補償與部分預訂補償下的生命週期。
 
-### Running the Microservice Workers
-For each of the services open up a terminal window in the directory containing the workers run the workers with node:
+---
+
+## ☁️ 部署至 Cloudflare Workers
+
+本專案配置檔為 [`wrangler.jsonc`](./wrangler.jsonc)，支援一鍵發布至 Cloudflare 邊緣網路：
 
 ```sh
-node ./BookHotel.js
-```
-```sh
-node ./FlightBooking.js
-```
-```sh
-node ./TrainBooking.js
+# 部署至 Cloudflare Workers
+npm run deploy
+
+# 本地模擬邊緣執行環境
+npm run worker:dev
+
+# 即時追蹤遠端線上日誌
+npx wrangler tail
 ```
 
-### @TODO Optional Components.
-Optimize and Cawemo
+---
+
+## 📁 目錄結構 (Repository Structure)
+
+```text
+├── Models/                     # BPMN 2.0 流程定義檔 (BookHolidaySagaPatternV3.bpmn)
+├── public/                     # 前端靜態單頁應用 (HTML5 / Vanilla CSS / JS)
+│   ├── index.html              # 旅遊訂票與即時儀表板頁面
+│   ├── style.css               # 深色太空風格與 Glassmorphism 樣式
+│   └── app.js                  # WebSocket/SSE 串流與 User Task 控制器
+├── src/                        # Cloudflare Worker 進入點
+│   ├── index.js                # Hono 邊緣路由、WebSocket Session 與微服務註冊
+│   ├── bpmn.js                 # 邊緣原生 BPMN 解析與轉譯適配器
+│   └── model.js                # BPMN XML 靜態模組
+├── tests/                      # 自動化反例與 Saga 整合測試 (32 tests)
+│   ├── bpmnkit-saga.test.mjs   # @bpmnkit/engine 流程整合測試
+│   └── helpers/                # BPMN 解析與沙箱測試輔助工具
+├── run-saga.mjs                # 本地 CLI 互動模擬器
+├── server.mjs                  # 本地 Node.js 開發伺服器
+├── wrangler.jsonc              # Cloudflare Workers 與 Observability 配置
+└── package.json                # 專案相依性與指令腳本
+```
