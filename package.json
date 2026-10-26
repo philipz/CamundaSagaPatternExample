@@ -1,10 +1,12 @@
 {
-  "name": "camunda-saga-counterexample-tests",
+  "name": "wandersaga",
   "version": "1.0.0",
   "private": true,
-  "description": "Executable tests for every counterexample in specs/quint/REPORT.md and specs/lean/REPORT.md (CE-1…CE-6, R1, ENV-1). Known violations are marked todo.",
+  "description": "WanderSaga - BPMN Saga Pattern with @bpmnkit/engine on Cloudflare Workers",
   "scripts": {
     "start": "node server.mjs",
+    "deploy": "wrangler deploy",
+    "worker:dev": "wrangler dev",
     "test": "node --test --test-reporter=spec \"tests/*.test.mjs\"",
     "test:watch": "node --test --watch \"tests/*.test.mjs\"",
     "simulate": "node run-saga.mjs",
@@ -16,9 +18,11 @@
   "devDependencies": {
     "bpmn-moddle": "10.3.1",
     "camunda-bpmn-moddle": "8.0.2",
-    "camunda-external-task-client-js": "2.3.1"
+    "camunda-external-task-client-js": "2.3.1",
+    "wrangler": "^4.152.0"
   },
   "dependencies": {
-    "@bpmnkit/engine": "^1.3.0"
+    "@bpmnkit/engine": "^1.3.0",
+    "hono": "^4.13.14"
   }
 }

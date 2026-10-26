@@ -1,7 +1,8 @@
-// WanderSaga Frontend Controller with Server-Sent Events (SSE)
+// WanderSaga Frontend Controller with Edge WebSocket & Fallback SSE
 
 let currentBookingId = null;
 let eventSource = null;
+let activeWs = null;
 
 // DOM Elements
 const form = document.getElementById('booking-form');
@@ -81,7 +82,7 @@ document.getElementById('preset-flight-only').addEventListener('click', () => {
 // Reset UI state for a new booking
 function resetUI() {
   decisionPanel.classList.remove('show');
-  
+
   for (const key of ['flight', 'train', 'hotel']) {
     cards[key].el.className = 'service-card';
     cards[key].status.textContent = '等待處理';
@@ -95,11 +96,15 @@ function resetUI() {
 }
 
 // Form Submit Handler
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', (e) => {
   e.preventDefault();
 
   if (eventSource) {
     eventSource.close();
+  }
+  if (activeWs) {
+    activeWs.close();
+    activeWs = null;
   }
 
   resetUI();
@@ -118,6 +123,44 @@ form.addEventListener('submit', async (e) => {
 
   addLog(`送出訂票請求: ${payload.passengerName} ➔ ${payload.destination}`, 'info');
 
+  // Try WebSocket first (recommended for Cloudflare stateless edge sessions)
+  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const wsUrl = `${protocol}//${location.host}/api/ws`;
+
+  let usedWs = false;
+  try {
+    const ws = new WebSocket(wsUrl);
+    activeWs = ws;
+
+    ws.onopen = () => {
+      usedWs = true;
+      ws.send(JSON.stringify({ action: 'start', payload }));
+    };
+
+    ws.onmessage = (msgEvent) => {
+      const ev = JSON.parse(msgEvent.data);
+      if (ev.type === 'booking:created') {
+        currentBookingId = ev.bookingId;
+        bookingIdEl.textContent = currentBookingId;
+        addLog(`流程已實例化！Instance ID: ${currentBookingId} (Edge Session)`, 'success');
+        return;
+      }
+      handleWorkflowEvent(ev);
+    };
+
+    ws.onerror = () => {
+      if (!usedWs) {
+        activeWs = null;
+        startHttpSaga(payload);
+      }
+    };
+  } catch {
+    startHttpSaga(payload);
+  }
+});
+
+// Fallback HTTP POST + SSE Runner
+async function startHttpSaga(payload) {
   try {
     const res = await fetch('/api/bookings', {
       method: 'POST',
@@ -131,64 +174,59 @@ form.addEventListener('submit', async (e) => {
     addLog(`流程已實例化！Instance ID: ${currentBookingId}`, 'success');
 
     // Connect Server-Sent Events
-    listenSSE(currentBookingId);
+    eventSource = new EventSource(`/api/bookings/${currentBookingId}/events`);
+    eventSource.onmessage = (e) => {
+      handleWorkflowEvent(JSON.parse(e.data));
+    };
+    eventSource.onerror = () => {
+      if (eventSource) eventSource.close();
+    };
   } catch (err) {
     addLog(`啟動失敗: ${err.message}`, 'error');
     submitBtn.disabled = false;
     statusPill.className = 'status-pill canceled';
     statusPill.textContent = '啟動錯誤';
   }
-});
+}
 
-// SSE Event Stream Listener
-function listenSSE(bookingId) {
-  eventSource = new EventSource(`/api/bookings/${bookingId}/events`);
+// Unified Workflow Event Handler
+function handleWorkflowEvent(ev) {
+  switch (ev.type) {
+    case 'element:entered':
+      const name = ev.elementName ? `"${ev.elementName}"` : ev.elementId;
+      activeStepBadge.textContent = `${name} (${ev.elementId})`;
+      addLog(`📍 BPMN 進入節點: ${name}`, 'bpmn');
+      break;
 
-  eventSource.onmessage = (e) => {
-    const ev = JSON.parse(e.data);
+    case 'worker:start':
+      handleWorkerStart(ev.topic);
+      break;
 
-    switch (ev.type) {
-      case 'element:entered':
-        const name = ev.elementName ? `"${ev.elementName}"` : ev.elementId;
-        activeStepBadge.textContent = `${name} (${ev.elementId})`;
-        addLog(`📍 BPMN 進入節點: ${name}`, 'bpmn');
-        break;
+    case 'worker:done':
+      handleWorkerDone(ev.topic, ev.variables);
+      break;
 
-      case 'worker:start':
-        handleWorkerStart(ev.topic);
-        break;
+    case 'user:waiting':
+      decisionPanel.classList.add('show');
+      statusPill.textContent = '等待用戶核對確認...';
+      addLog(`👤 流程停駐於 User Task (Activity_034u6ma) - 請用戶做成決策`, 'warning');
+      break;
 
-      case 'worker:done':
-        handleWorkerDone(ev.topic, ev.variables);
-        break;
+    case 'compensation:start':
+      handleCompensationStart(ev.topic);
+      break;
 
-      case 'user:waiting':
-        decisionPanel.classList.add('show');
-        statusPill.textContent = '等待用戶核對確認...';
-        addLog(`👤 流程停駐於 User Task (Activity_034u6ma) - 請用戶做成決策`, 'warning');
-        break;
+    case 'compensation:done':
+      handleCompensationDone(ev.topic, ev.variables);
+      break;
 
-      case 'compensation:start':
-        handleCompensationStart(ev.topic);
-        break;
+    case 'process:completed':
+      handleProcessCompleted(ev.endEventId, ev.variables);
+      break;
 
-      case 'compensation:done':
-        handleCompensationDone(ev.topic, ev.variables);
-        break;
-
-      case 'process:completed':
-        handleProcessCompleted(ev.endEventId, ev.variables);
-        break;
-
-      default:
-        break;
-    }
-  };
-
-  eventSource.onerror = () => {
-    // Connection closed or lost
-    if (eventSource) eventSource.close();
-  };
+    default:
+      break;
+  }
 }
 
 // Worker UI Handlers
@@ -265,13 +303,11 @@ function handleCompensationDone(topic, vars) {
 
 function handleProcessCompleted(endEventId, vars) {
   if (endEventId === 'Event_07xntzc') {
-    // Happy path end event
     statusPill.className = 'status-pill completed';
     statusPill.textContent = '✅ 假期訂位成功！';
     activeStepBadge.textContent = 'Trip completed (Event_07xntzc)';
     addLog('🎉 恭喜！整個旅遊訂票 Saga 流程已順利以「確認出發」結束。', 'success');
   } else {
-    // Canceled end event
     statusPill.className = 'status-pill canceled';
     statusPill.textContent = '🛑 假期已取消 (全額退費)';
     activeStepBadge.textContent = 'Trip Canceled (Event_0b7jeb0)';
@@ -280,6 +316,10 @@ function handleProcessCompleted(endEventId, vars) {
 
   submitBtn.disabled = false;
   if (eventSource) eventSource.close();
+  if (activeWs) {
+    activeWs.close();
+    activeWs = null;
+  }
 }
 
 // User Decision Actions
@@ -296,13 +336,17 @@ btnCancel.addEventListener('click', async () => {
 });
 
 async function sendDecision(confirm) {
-  try {
-    await fetch(`/api/bookings/${currentBookingId}/decision`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ confirm }),
-    });
-  } catch (err) {
-    addLog(`決策提交失敗: ${err.message}`, 'error');
+  if (activeWs && activeWs.readyState === WebSocket.OPEN) {
+    activeWs.send(JSON.stringify({ action: 'decision', confirm }));
+  } else {
+    try {
+      await fetch(`/api/bookings/${currentBookingId}/decision`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirm }),
+      });
+    } catch (err) {
+      addLog(`決策提交失敗: ${err.message}`, 'error');
+    }
   }
 }

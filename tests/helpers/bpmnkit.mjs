@@ -7,8 +7,7 @@ import { Engine } from '@bpmnkit/engine';
  * Translates legacy Camunda 7 attributes (camunda:topic and JUEL expressions)
  * into @bpmnkit/engine / Zeebe compatible structures seamlessly.
  */
-export function loadBpmnForBpmnKit(filePath) {
-  const xml = fs.readFileSync(filePath, 'utf8');
+export function createEngineFromXml(xml) {
   const defs = Bpmn.parse(xml);
   const proc = defs.processes[0];
 
@@ -46,4 +45,12 @@ export function loadBpmnForBpmnKit(filePath) {
     engine,
     processId: proc.id,
   };
+}
+
+/**
+ * Loads and adapts a BPMN XML file for execution in @bpmnkit/engine.
+ */
+export function loadBpmnForBpmnKit(filePath) {
+  const xml = fs.readFileSync(filePath, 'utf8');
+  return createEngineFromXml(xml);
 }
