@@ -181,7 +181,7 @@ body {
   display: grid;
   grid-template-columns: 400px 1fr;
   gap: 24px;
-  align-items: start;
+  align-items: stretch;
 }
 
 @media (max-width: 960px) {
@@ -433,6 +433,7 @@ input[type="text"]:focus, select:focus {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  height: 100%;
 }
 
 /* 總覽狀態卡片 */
@@ -752,6 +753,10 @@ input[type="text"]:focus, select:focus {
 /* 即時日誌卡片 */
 .log-card {
   padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 280px;
 }
 
 .log-header {
@@ -785,7 +790,8 @@ input[type="text"]:focus, select:focus {
   padding: 12px 14px;
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  max-height: 220px;
+  flex: 1;
+  min-height: 200px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
