@@ -10,6 +10,9 @@
     "directory": "./public",
     "binding": "ASSETS"
   },
+  "placement": {
+    "mode": "smart"
+  },
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1
