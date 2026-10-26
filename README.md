@@ -18,14 +18,14 @@
 
 ## 🏗️ 架構演進與技術棧 (Architecture & Tech Stack)
 
-| 維度 | 早期架構 (Camunda 7) | 現行邊緣架構 (WanderSaga) |
-| :--- | :--- | :--- |
-| **流程執行引擎** | Camunda Platform Run (Java / Spring Boot JAR) | **`@bpmnkit/engine`**（純 TS、Zero-dependency、邊緣原生） |
-| **部署與運行環境** | 本地 Docker 容器 (`camunda-bpm-platform:run-latest`) | **Cloudflare Workers** (全球 V8 Isolate 邊緣節點) |
-| **靜態資源託管** | Spring Boot 靜態目錄 | **Cloudflare Workers Static Assets** (全球 CDN 快取) |
-| **微服務通訊** | HTTP REST `fetchAndLock` 長輪詢 (高延遲/頻寬開銷) | **同駐邊緣微服務 + WebSocket Edge Session** (零輪詢開銷) |
-| **前端與即時進度** | Camunda Cockpit / Tasklist | **客製化現代旅遊 Web 儀表板** (Glassmorphism + 即時日誌) |
-| **可觀測性** | 日誌檔案與資料庫記錄 | **Cloudflare Workers Observability** (100% 邊緣請求追蹤) |
+| 維度               | 早期架構 (Camunda 7)                                 | 現行邊緣架構 (WanderSaga)                                 |
+| :----------------- | :--------------------------------------------------- | :-------------------------------------------------------- |
+| **流程執行引擎**   | Camunda Platform Run (Java / Spring Boot JAR)        | **`@bpmnkit/engine`**（純 TS、Zero-dependency、邊緣原生） |
+| **部署與運行環境** | 本地 Docker 容器 (`camunda-bpm-platform:run-latest`) | **Cloudflare Workers** (全球 V8 Isolate 邊緣節點)         |
+| **靜態資源託管**   | Spring Boot 靜態目錄                                 | **Cloudflare Workers Static Assets** (全球 CDN 快取)      |
+| **微服務通訊**     | HTTP REST `fetchAndLock` 長輪詢 (高延遲/頻寬開銷)    | **同駐邊緣微服務 + WebSocket Edge Session** (零輪詢開銷)  |
+| **前端與即時進度** | Camunda Cockpit / Tasklist                           | **客製化現代旅遊 Web 儀表板** (Glassmorphism + 即時日誌)  |
+| **可觀測性**       | 日誌檔案與資料庫記錄                                 | **Cloudflare Workers Observability** (100% 邊緣請求追蹤)  |
 
 ---
 
@@ -33,9 +33,10 @@
 
 流程定義於 [`Models/BookHolidaySagaPatternV3.bpmn`](./Models/BookHolidaySagaPatternV3.bpmn)：
 
-![Book a holiday saga](./Models/BookHolidaySagaPatternV2.png)
+![Book a holiday saga](./Models/BookHolidaySagaPatternV3.png)
 
 ### 執行生命週期解析：
+
 1. **平行預訂階段 (Parallel Booking)**：
    - 流程啟動後，依據輸入參數同時向三個微服務派發工作：
      - 🛫 **BookFlight** (`camunda:topic="BookFlight"`)
@@ -58,20 +59,25 @@
 ## 🚀 快速開始 (Quick Start)
 
 ### 1. 環境需求
+
 - Node.js >= 20
 - npm >= 9
 
 ### 2. 安裝依賴
+
 ```sh
 npm install
 ```
 
 ### 3. 本地啟動 Web 旅遊訂票互動系統
+
 ```sh
 npm start
 # 預設啟動於 http://localhost:3000
 ```
+
 若 Port 3000 已被其他應用佔用，可自由指定其他 Port：
+
 ```sh
 PORT=8080 npm start
 # 或
@@ -79,6 +85,7 @@ npm start -- --port 8080
 ```
 
 ### 4. 本地 CLI 模擬執行 (不用開瀏覽器)
+
 ```sh
 # 測試 1：正向出發 (Happy Path)
 npm run simulate
@@ -101,6 +108,7 @@ npm test
 ```
 
 目前共包含 **32 個測試，全數通過 (32 pass, 0 fail, 0 todo)**：
+
 - **CE-1 ~ CE-6**：補償路徑不可達、重送冪等性、失敗中斷、ID 一致性、Join 異步衝突反例驗證。
 - **R1 / ENV-1**：Worker ID 隔離與 ESM 模組格式契約。
 - **BPMNKit Saga 本地模擬測試**：驗證真實流程引擎在 Happy Path、全額退訂補償與部分預訂補償下的生命週期。
