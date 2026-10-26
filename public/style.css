@@ -657,22 +657,44 @@ input[type="text"]:focus, select:focus {
   text-align: center;
 }
 
-/* 決策卡片 (User Task) */
-.decision-card {
+/* User Task 互動浮層對話框 (Modal Overlay) */
+.decision-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 15, 25, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.decision-overlay.show {
+  display: flex;
+}
+
+.decision-modal-card {
+  background: linear-gradient(135deg, rgba(20, 32, 54, 0.98), rgba(15, 23, 42, 0.98));
   border: 2px solid var(--primary);
-  background: linear-gradient(135deg, rgba(30, 58, 138, 0.3), rgba(15, 23, 42, 0.9));
-  box-shadow: 0 0 35px var(--primary-glow);
-  display: none; /* 預設隱藏，觸發 User Task 時才展開 */
-  animation: fadeIn 0.4s ease-out forwards;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 50px var(--primary-glow), 0 25px 60px rgba(0, 0, 0, 0.85);
+  max-width: 640px;
+  width: 100%;
+  padding: 32px 28px;
+  animation: modalScaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.decision-card.show {
-  display: block;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .user-task-tag {

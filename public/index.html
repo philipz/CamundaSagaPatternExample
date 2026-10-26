@@ -229,24 +229,26 @@
           </div>
         </div>
 
-        <!-- User Task 互動卡片（核對明細與決策） -->
-        <div class="card decision-card" id="decision-panel">
-          <div class="decision-header">
-            <div class="user-task-tag">👤 User Task: Check Booking Details (Activity_034u6ma)</div>
-            <h2>行程核對完成！請選擇後續決策：</h2>
-            <p>目前所有選取的微服務皆已順利保留配額。請在下方確認出發，或立即發動 Saga 逆向補償撤銷行程。</p>
-          </div>
+        <!-- User Task 互動浮層對話框（Modal Overlay，完全不推擠底層畫面佈局） -->
+        <div class="decision-overlay" id="decision-panel">
+          <div class="decision-modal-card">
+            <div class="decision-header">
+              <div class="user-task-tag">👤 User Task: Check Booking Details (Activity_034u6ma)</div>
+              <h2>行程核對完成！請選擇後續決策：</h2>
+              <p>目前所有選取的微服務皆已順利保留配額。請在下方確認出發，或立即發動 Saga 逆向補償撤銷行程。</p>
+            </div>
 
-          <div class="decision-actions">
-            <button type="button" id="btn-confirm" class="btn btn-success btn-lg">
-              <span>✅ 確認出發 (Happy Path)</span>
-              <small>confirm = true ➔ 完成旅程 (Trip completed)</small>
-            </button>
+            <div class="decision-actions">
+              <button type="button" id="btn-confirm" class="btn btn-success btn-lg">
+                <span>✅ 確認出發 (Happy Path)</span>
+                <small>confirm = true ➔ 完成旅程 (Trip completed)</small>
+              </button>
 
-            <button type="button" id="btn-cancel" class="btn btn-danger btn-lg">
-              <span>❌ 取消行程並退訂 (Saga 補償)</span>
-              <small>confirm = false ➔ 觸發 Cancel Bookings 補償事件</small>
-            </button>
+              <button type="button" id="btn-cancel" class="btn btn-danger btn-lg">
+                <span>❌ 取消行程並退訂 (Saga 補償)</span>
+                <small>confirm = false ➔ 觸發 Cancel Bookings 補償事件</small>
+              </button>
+            </div>
           </div>
         </div>
 
