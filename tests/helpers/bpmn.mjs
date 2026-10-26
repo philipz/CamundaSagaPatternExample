@@ -141,11 +141,13 @@ export function confirmBranches(model) {
     target: idOf(f.targetRef),
     condition: conditionOf(f),
   }));
+  const defaultFlowId = idOf(gateway.default);
   return {
     gateway,
-    confirm: branches.find((b) => b.condition && !/not\s+confirm|!\s*confirm/.test(b.condition)
+    confirm: branches.find((b) => b.condition && !/not\s+confirm|!\s*confirm|confirm\s*==\s*false/.test(b.condition)
       && /confirm/.test(b.condition)),
-    cancel: branches.find((b) => /not\s+confirm|!\s*confirm/.test(b.condition ?? '')),
+    cancel: branches.find((b) => /not\s+confirm|!\s*confirm|confirm\s*==\s*false/.test(b.condition ?? '')
+      || (defaultFlowId && b.flow.id === defaultFlowId)),
     branches,
   };
 }
