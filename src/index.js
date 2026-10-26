@@ -1,7 +1,10 @@
 import { Hono } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import { createEngineFromXml } from './bpmn.js';
+import { createEngineFromXml, getOrPrepareDefinitions } from './bpmn.js';
 import { V3_BPMN_XML } from './model.js';
+
+// Pre-warm BPMN definition AST at module startup (0 ms XML parsing at request time)
+getOrPrepareDefinitions(V3_BPMN_XML);
 
 const app = new Hono();
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -146,6 +149,10 @@ function createSagaBooking(bookingId, inputVars) {
         endEventId: booking.endEventId,
         variables: instance.variables_snapshot,
       });
+      // TTL cleanup: auto-remove completed bookings after 5 minutes to prevent Map expansion
+      setTimeout(() => {
+        bookings.delete(bookingId);
+      }, 5 * 60 * 1000);
     }
   });
 
@@ -252,17 +259,26 @@ app.get('/api/bookings/:id/events', (c) => {
 
     booking.listeners.add(listener);
 
+    const abortHandler = () => {
+      if (resolveWait) {
+        resolveWait();
+        resolveWait = null;
+      }
+    };
+    c.req.raw.signal.addEventListener('abort', abortHandler, { once: true });
+
     try {
-      while (!stream.aborted) {
+      while (!stream.aborted && !c.req.raw.signal.aborted) {
         if (queue.length === 0) {
           if (booking.state === 'completed') {
             break;
           }
+          // Pure event-driven sleep: wakes on new event, client abort, or 30s keepalive ping
           await Promise.race([
             new Promise((r) => {
               resolveWait = r;
             }),
-            stream.sleep(500),
+            stream.sleep(30000),
           ]);
         }
 
@@ -277,6 +293,7 @@ app.get('/api/bookings/:id/events', (c) => {
       }
     } finally {
       booking.listeners.delete(listener);
+      c.req.raw.signal.removeEventListener('abort', abortHandler);
     }
   });
 });
